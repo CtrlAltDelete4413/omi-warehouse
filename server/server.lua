@@ -120,14 +120,20 @@ RegisterNetEvent('moon-warehouse:server:upgradewarehousesize', function(location
     end
 end)
 
-RegisterNetEvent('moon:warehouse:server:oxinventorystash', function(warehouseid, stashname, stashsize, slots)
-	local Player = QBCore.Functions.GetPlayer(source)
-	local id = warehouseid
-    local stashname = stashname
-    local slots = slots
-    exports.ox_inventory:RegisterStash(stashname, stashname, slots, stashsize)
-	TriggerClientEvent("moon-warehouse:client:openstash", source, id)
+RegisterNetEvent('moon-warehouse:server:oxinventorystash', function(warehouseid, stashname, stashsize, slots)
+    local src = source
+    local stashData = {
+        label = 'Warehouse #'..warehouseid,
+        slots = slots or 50, -- Default 50 slots jika tidak ditentukan
+        weight = stashsize or 100000 -- Default 100000 jika tidak ditentukan
+    }
+
+    exports.ox_inventory:RegisterStash(stashname, stashData.label, stashData.slots, stashData.weight)
+
+    -- Kirim ke client agar membuka stash
+    TriggerClientEvent('moon-warehouse:client:openoxstash', src, stashname)
 end)
+
 
 RegisterNetEvent('moon-warehouse:server:sellwarehouse', function(location)
     local src = source
